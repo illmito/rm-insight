@@ -1,11 +1,10 @@
-import os
+import pandas as pd
+import numpy as np
 import re
+import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, Scrollbar
 from tkinter.ttk import Progressbar, Button, Label, Style
-
-import numpy as np
-import pandas as pd
 
 
 class PrioritySummaryApp:
@@ -14,19 +13,27 @@ class PrioritySummaryApp:
         self.root.title("RM Insight")
         self.root.minsize(600, 400)
 
+        # === App Styling ===
         style = Style()
         style.configure("TButton", font=("Segoe UI", 10), padding=6)
         style.configure("TLabel", font=("Segoe UI", 10))
 
+        # === App Variables ===
         self.file_path = None
         self.summary_df = None
         self.agent_frame = None
         self.controls_frame = None
         self.filename_label = None
+        self.listbox = None
+        self.save_btn = None
 
         self.init_ui()
 
     def build_menu(self):
+        """
+        Creates the top menu bar for the application.
+        This includes the Help option and Exit option.
+        """
         menu_bar = tk.Menu(self.root)
 
         file_menu = tk.Menu(menu_bar, tearoff=0)
@@ -35,11 +42,13 @@ class PrioritySummaryApp:
         file_menu.add_command(label="Exit", command=self.root.quit)
 
         menu_bar.add_cascade(label="File", menu=file_menu)
+
         self.root.config(menu=menu_bar)
 
     def init_ui(self):
-        self.build_menu()
-
+        """
+        Builds the main starting screen of the app.
+        """
         for widget in self.root.winfo_children():
             widget.destroy()
 
@@ -72,9 +81,18 @@ class PrioritySummaryApp:
         )
         self.status_label.grid(row=3, column=0, pady=(0, 5))
 
+        # Build the top menu after the main UI has loaded
+        self.build_menu()
+
     def upload_file(self):
+        """
+        Opens a file picker and allows the user to select a CSV file.
+        """
         filetypes = [("CSV files", "*.csv")]
-        path = filedialog.askopenfilename(title="Open file", filetypes=filetypes)
+        path = filedialog.askopenfilename(
+            title="Open file",
+            filetypes=filetypes
+        )
 
         if path:
             self.file_path = path
@@ -82,6 +100,10 @@ class PrioritySummaryApp:
             self.status_label.config(text=f"Loaded: {base_name}")
 
     def process_data(self):
+        """
+        Reads the selected CSV, cleans the data, extracts priority values,
+        and creates a summary table grouped by RM Agent.
+        """
         if not self.file_path:
             messagebox.showerror("Error", "Please upload a CSV file first.")
             return
@@ -92,13 +114,24 @@ class PrioritySummaryApp:
         try:
             df = pd.read_csv(self.file_path)
 
-            for col in ["Users", "Subject", "Total Handle"]:
+            required_columns = ["Users", "Subject", "Total Handle"]
+
+            for col in required_columns:
                 if col not in df.columns:
                     raise ValueError(f"Missing expected column: {col}")
 
-            df["Total Handle"] = pd.to_numeric(df["Total Handle"], errors="coerce")
+            # Convert Total Handle to a numeric value.
+            # Invalid values become NaN instead of crashing the app.
+            df["Total Handle"] = pd.to_numeric(
+                df["Total Handle"],
+                errors="coerce"
+            )
 
             def clean_users(user_entry):
+                """
+                Cleans the Users field.
+                If multiple users are listed with ; or , the last user is retained.
+                """
                 if pd.isna(user_entry):
                     return user_entry
 
@@ -113,6 +146,9 @@ class PrioritySummaryApp:
             df["Users"] = df["Users"].apply(clean_users)
 
             def extract_priority(subject):
+                """
+                Extracts priority from the Subject field.
+                """
                 if pd.isna(subject):
                     return "Nil"
 
@@ -138,11 +174,13 @@ class PrioritySummaryApp:
             self.root.update()
 
             priorities = ["P1", "P2", "P3", "P3.5", "P4", "P5", "P5 7D"]
+
             summary = {}
 
             for user in df["Users"].dropna().unique():
                 user_data = df[df["Users"] == user]
                 user_summary = {}
+
                 total_jobs = 0
                 total_handle = []
 
@@ -153,7 +191,9 @@ class PrioritySummaryApp:
                     aht = p_data["Total Handle"].mean() if count > 0 else 0
 
                     total_jobs += count
-                    total_handle.extend(p_data["Total Handle"].dropna().tolist())
+                    total_handle.extend(
+                        p_data["Total Handle"].dropna().tolist()
+                    )
 
                     user_summary[p] = count
                     user_summary[f"{p} AHT"] = (
@@ -163,6 +203,7 @@ class PrioritySummaryApp:
                 user_summary["P Total"] = total_jobs
 
                 avg_total_handle = np.mean(total_handle) if total_handle else 0
+
                 user_summary["Average Total Handle"] = (
                     pd.to_timedelta(avg_total_handle, unit="s")
                     if avg_total_handle
@@ -215,6 +256,10 @@ class PrioritySummaryApp:
             messagebox.showerror("Processing Error", str(e))
 
     def display_agent_selection(self):
+        """
+        Displays the agent selection list after data has been processed.
+        Users can choose which agents to include in the final export.
+        """
         if self.agent_frame:
             self.agent_frame.destroy()
 
@@ -263,6 +308,9 @@ class PrioritySummaryApp:
             self.listbox.insert("end", agent)
 
         def toggle_selection(event):
+            """
+            Allows clicking an agent once to select/deselect it.
+            """
             index = self.listbox.nearest(event.y)
 
             if index >= 0:
@@ -300,20 +348,33 @@ class PrioritySummaryApp:
         self.save_btn.pack(side="right", padx=10)
 
     def update_save_button(self):
+        """
+        Enables the Save button only when at least one agent is selected.
+        """
         if len(self.listbox.curselection()) > 0:
             self.save_btn["state"] = "normal"
         else:
             self.save_btn["state"] = "disabled"
 
     def select_all(self):
+        """
+        Selects all agents in the listbox.
+        """
         self.listbox.select_set(0, "end")
         self.update_save_button()
 
     def deselect_all(self):
+        """
+        Clears all selected agents in the listbox.
+        """
         self.listbox.selection_clear(0, "end")
         self.update_save_button()
 
     def on_save(self):
+        """
+        Saves the selected agents into an Excel file.
+        Adds a TOTAL / TOTAL AVG row at the bottom.
+        """
         selected_indices = self.listbox.curselection()
         selected_agents = [self.listbox.get(i) for i in selected_indices]
 
@@ -326,7 +387,7 @@ class PrioritySummaryApp:
         for p in ["P1", "P2", "P3", "P3.5", "P4", "P5", "P5 7D", "P Total"]:
             summary_row[p] = filtered_df[p].astype(int).sum()
 
-        for col in [
+        time_cols = [
             "P1 AHT",
             "P2 AHT",
             "P3 AHT",
@@ -335,7 +396,9 @@ class PrioritySummaryApp:
             "P5 AHT",
             "P5 7D AHT",
             "Average Total Handle",
-        ]:
+        ]
+
+        for col in time_cols:
             times = pd.to_timedelta(filtered_df[col], errors="coerce")
             avg = times.mean()
             summary_row[col] = self.format_timedelta(avg)
@@ -355,10 +418,14 @@ class PrioritySummaryApp:
             messagebox.showinfo("Saved", f"File saved to: {filepath}")
 
     def format_timedelta(self, td):
+        """
+        Converts pandas timedelta values into H:MM:SS format.
+        """
         if pd.isna(td) or td == pd.NaT:
             return "0:00:00"
 
         total_seconds = int(td.total_seconds())
+
         hours = total_seconds // 3600
         minutes = (total_seconds % 3600) // 60
         seconds = total_seconds % 60
@@ -366,6 +433,9 @@ class PrioritySummaryApp:
         return f"{hours}:{minutes:02}:{seconds:02}"
 
     def show_help(self):
+        """
+        Opens the Help window from the top File menu.
+        """
         help_win = tk.Toplevel(self.root)
         help_win.title("Help & Data Requirements")
         help_win.geometry("600x480")
@@ -400,7 +470,12 @@ class PrioritySummaryApp:
 
         scrollbar.config(command=text.yview)
 
-        text.tag_configure("heading", font=("Segoe UI", 10, "bold"), spacing3=4)
+        text.tag_configure(
+            "heading",
+            font=("Segoe UI", 10, "bold"),
+            spacing3=4
+        )
+
         text.tag_configure(
             "section",
             font=("Segoe UI", 10),
@@ -409,6 +484,7 @@ class PrioritySummaryApp:
             spacing1=4,
             spacing3=6
         )
+
         text.tag_configure(
             "footer",
             font=("Segoe UI", 9, "italic"),
@@ -428,40 +504,67 @@ class PrioritySummaryApp:
         text.insert("end", "📄 Required Columns in the CSV:\n", "heading")
         text.insert(
             "end",
-            "- Users: RM Agent names (last name retained if multiple listed).\n",
+            "- Users: RM Agent names. If multiple users are listed, the last user is retained.\n",
             "section"
         )
         text.insert(
             "end",
-            "- Subject: Used to detect the priority, e.g. P3 - Light Issue.\n",
+            "- Subject: Used to detect the priority, such as P1, P2, P3, P4 or P5.\n",
             "section"
         )
         text.insert(
             "end",
-            "- Total Handle: Numeric value in seconds.\n\n",
+            "- Total Handle: Numeric handle time value in seconds.\n\n",
             "section"
         )
 
-        text.insert("end", "🔍 Recognized Priorities:\n", "heading")
+        text.insert("end", "🔍 Recognised Priorities:\n", "heading")
         text.insert(
             "end",
-            "- P1, P2, P3, P3.5, P4, P5, P5 (within 7 days) → renamed to P5 7D\n",
+            "- P1, P2, P3, P3.5, P4, P5, and P5 within 7 days.\n",
             "section"
         )
-        text.insert("end", "- If none found, marked as Nil\n\n", "section")
+        text.insert(
+            "end",
+            "- P5 (within 7 days) is renamed to P5 7D.\n",
+            "section"
+        )
+        text.insert(
+            "end",
+            "- If no priority is found, it is marked as Nil.\n\n",
+            "section"
+        )
 
         text.insert("end", "📈 Summary Output:\n", "heading")
-        text.insert("end", "- Count per priority\n", "section")
-        text.insert("end", "- AHT per priority\n", "section")
-        text.insert("end", "- Total jobs and overall AHT\n", "section")
-        text.insert("end", "- Final row = TOTAL / TOTAL AVG\n\n", "section")
+        text.insert("end", "- Count per priority.\n", "section")
+        text.insert("end", "- Average handle time per priority.\n", "section")
+        text.insert("end", "- Total jobs per selected agent.\n", "section")
+        text.insert("end", "- Overall average total handle time.\n", "section")
+        text.insert(
+            "end",
+            "- Final row shows TOTAL / TOTAL AVG for selected agents.\n\n",
+            "section"
+        )
 
         text.insert("end", "⚠️ Common Issues:\n", "heading")
-        text.insert("end", "- Column names must match exactly\n", "section")
-        text.insert("end", "- Total Handle must be numeric\n", "section")
-        text.insert("end", "- File must be saved as .csv\n\n", "section")
+        text.insert(
+            "end",
+            "- Column names must match exactly: Users, Subject, Total Handle.\n",
+            "section"
+        )
+        text.insert(
+            "end",
+            "- Total Handle must be a numeric value in seconds.\n",
+            "section"
+        )
+        text.insert(
+            "end",
+            "- The input file must be saved as a CSV file.\n\n",
+            "section"
+        )
 
         text.insert("end", "👤 Created by Thomas Brayovic © 2025", "footer")
+
         text.config(state="disabled")
 
 
