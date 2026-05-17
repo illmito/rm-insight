@@ -1,0 +1,21 @@
+﻿Full Export Completed,Partial Result Timestamp,Filters,Media Type,Users,Remote,Date,Duration,Direction,Queue,Wrap-up,External Tag,Subject,Total Handle
+Yes,,Media Type: Email; Queue: RM,Email,Queue Transfer; Alex Johnson,customer01@example.com,2026-05-01 08:12:00,00:05:42,Inbound,RM Email,Completed,GEN-0001,P1 - 1129000010 - Urgent Power Outage,342
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Brianna Smith,customer02@example.com,2026-05-01 08:25:00,00:04:18,Inbound,RM Email,Completed,GEN-0002,P2 - 1129000011 - Water Leak Reported,258
+Yes,,Media Type: Email; Queue: RM,Email,Alex Johnson,customer03@example.com,2026-05-01 09:05:00,00:03:45,Inbound,RM Email,Completed,GEN-0003,P3 - 1129000012 - Broken Door Handle,225
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Daniel Lee,customer04@example.com,2026-05-01 09:22:00,00:07:12,Inbound,RM Email,Completed,GEN-0004,P3.5 - 1129000013 - Air Conditioner Fault,432
+Yes,,Media Type: Email; Queue: RM,Email,Brianna Smith,customer05@example.com,2026-05-01 09:45:00,00:02:58,Inbound,RM Email,Completed,GEN-0005,P4 - 1129000014 - General Repair Request,178
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Chloe Martin,customer06@example.com,2026-05-01 10:10:00,00:06:05,Inbound,RM Email,Completed,GEN-0006,P5 - 1129000015 - Follow Up Request,365
+Yes,,Media Type: Email; Queue: RM,Email,Daniel Lee,customer07@example.com,2026-05-01 10:35:00,00:08:21,Inbound,RM Email,Completed,GEN-0007,P5 (within 7 days) - 1129000016 - Scheduled Maintenance Query,501
+Yes,,Media Type: Email; Queue: RM,Email,Queue Transfer; Alex Johnson,customer08@example.com,2026-05-01 11:02:00,00:04:40,Inbound,RM Email,Completed,GEN-0008,P3 - 1129000017 - Lights Flickering In Office,280
+Yes,,Media Type: Email; Queue: RM,Email,Chloe Martin,customer09@example.com,2026-05-01 11:18:00,00:03:12,Inbound,RM Email,Completed,GEN-0009,P4 - 1129000018 - Pest Control Request,192
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Brianna Smith,customer10@example.com,2026-05-01 11:40:00,00:05:15,Inbound,RM Email,Completed,GEN-0010,P2 - 1129000019 - Toilet Blockage,315
+Yes,,Media Type: Email; Queue: RM,Email,Daniel Lee,customer11@example.com,2026-05-01 12:05:00,00:09:05,Inbound,RM Email,Completed,GEN-0011,P1 - 1129000020 - Safety Issue Reported,545
+Yes,,Media Type: Email; Queue: RM,Email,Alex Johnson,customer12@example.com,2026-05-01 12:32:00,00:02:20,Inbound,RM Email,Completed,GEN-0012,General enquiry - no priority listed,140
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Chloe Martin,customer13@example.com,2026-05-01 13:00:00,00:06:48,Inbound,RM Email,Completed,GEN-0013,P3.5 - 1129000021 - Heating Issue In Common Area,408
+Yes,,Media Type: Email; Queue: RM,Email,Brianna Smith,customer14@example.com,2026-05-01 13:35:00,00:04:55,Inbound,RM Email,Completed,GEN-0014,P5 (within 7 days) - 1129000022 - Furniture Repair Request,295
+Yes,,Media Type: Email; Queue: RM,Email,Daniel Lee,customer15@example.com,2026-05-01 14:05:00,00:03:36,Inbound,RM Email,Completed,GEN-0015,P4 - 1129000023 - Window Repair Request,216
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Alex Johnson,customer16@example.com,2026-05-01 14:30:00,00:07:45,Inbound,RM Email,Completed,GEN-0016,P2 - 1129000024 - Lift Fault Reported,465
+Yes,,Media Type: Email; Queue: RM,Email,Chloe Martin,customer17@example.com,2026-05-01 15:10:00,00:04:02,Inbound,RM Email,Completed,GEN-0017,P3 - 1129000025 - Drainage Issue,242
+Yes,,Media Type: Email; Queue: RM,Email,Brianna Smith,customer18@example.com,2026-05-01 15:25:00,00:06:30,Inbound,RM Email,Completed,GEN-0018,P5 - 1129000026 - Non Urgent Service Request,390
+Yes,,Media Type: Email; Queue: RM,Email,Case Owner; Daniel Lee,customer19@example.com,2026-05-01 15:48:00,00:05:08,Inbound,RM Email,Completed,GEN-0019,P3 - 1129000027 - Door Lock Not Working,308
+Yes,,Media Type: Email; Queue: RM,Email,Chloe Martin,customer20@example.com,2026-05-01 16:05:00,00:02:50,Inbound,RM Email,Completed,GEN-0020,P4 - 1129000028 - Cleaning Request,170
